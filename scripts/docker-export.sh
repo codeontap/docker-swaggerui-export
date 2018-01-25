@@ -5,6 +5,7 @@ set -e
 BASE_URL=${BASE_URL:-/}
 NGINX_ROOT=/usr/share/nginx/html
 INDEX_FILE=$NGINX_ROOT/index.html
+APIDOC_FILE=$NGINX_ROOT/apidoc.html
 
 replace_in_index () {
   if [ "$1" != "**None**" ]; then
@@ -57,6 +58,11 @@ fi
 if [[ -n "$API_URLS" ]]; then
     sed -i "s|url: .*,|urls: $API_URLS,|g" $INDEX_FILE
 fi
+
+# copy index.html to apidoc.html for compatability with existing docs publishing
+if [[ -f $INDEX_FILE ]]; then
+  cp $INDEX_FILE $APIDOC_FILE
+fi 
 
 # Create a ApiDoc and export to outdir 
 zip -rj /app/outdir/apidoc.zip /usr/share/nginx/html
